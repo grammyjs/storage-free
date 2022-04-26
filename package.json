@@ -1,0 +1,44 @@
+{
+  "name": "@grammyjs/storage-free",
+  "version": "0.1.0",
+  "description": "Storage adapter for grammY's free sessions",
+  "main": "out/mod.js",
+  "types": "out/mod.d.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "deno2node tsconfig.json",
+    "fmt": "deno fmt --config deno.jsonc",
+    "lint": "deno lint --config deno.jsonc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/grammyjs/storage-free.git"
+  },
+  "files": [
+    "out/"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/grammyjs/storage-free/issues"
+  },
+  "homepage": "https://github.com/grammyjs/storage-free#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.6"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.12",
+    "deno2node": "^1.0.0"
+  },
+  "keywords": [
+    "grammy",
+    "telegram",
+    "bot",
+    "session",
+    "storage",
+    "adapter",
+    "middleware",
+    "free"
+  ]
+}
