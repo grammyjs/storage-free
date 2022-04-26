@@ -66,6 +66,8 @@ We then forget about your token again, so it is never stored.
 This package will handle the login procedure (and everything else) for you.
 There is no further setup.
 
+You may also be interested in [our open-source backend implementation](https://github.com/grammyjs/free-session-backend).
+
 ## Full Example Bot
 
 Example of a message counter bot running on Deno:
