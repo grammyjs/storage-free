@@ -2,7 +2,7 @@ class Storage {
   private jwt: string | undefined;
   constructor(
     private readonly token: string,
-    private readonly rootUrl = "http://localhost:8080",
+    private readonly rootUrl = "https://grammy-free-session.deno.dev",
   ) {}
 
   async login() {
