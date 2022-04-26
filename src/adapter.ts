@@ -8,7 +8,7 @@ class Storage {
   async login() {
     const url = `${this.rootUrl}/login`;
     const body = JSON.stringify({ token: this.token });
-    const response = await fetch(url, { method: "POST", body });
+    const response = await retryFetch(url, { method: "POST", body });
     const { token } = await response.json();
     if (typeof token !== "string") {
       throw new Error("Cannot use free session, invalid bot token!");
@@ -25,7 +25,7 @@ class Storage {
     const url = `${this.rootUrl}/session/${key}`;
     if (this.jwt === undefined) await this.login();
     const headers = { "Authorization": `Bearer ${this.jwt}` };
-    const response = await fetch(url, { method, body, headers });
+    const response = await retryFetch(url, { method, body, headers });
     // handle response
     if (response.status === 401) {
       // token was revoked, must login again
@@ -39,7 +39,7 @@ class Storage {
       return method === "GET" ? await response.text() : undefined;
     } else {
       // error
-      throw new Error(`${response.status}: ${await response.text()}`);
+      throw new Error(`${response.status}: ${(await response.json()).error}`);
     }
   }
 }
@@ -58,4 +58,17 @@ export function freeStorage<T>(token: string, opts?: { rootUrl?: string }) {
       await storage.call("DELETE", key);
     },
   };
+}
+
+async function retryFetch(
+  ...args: Parameters<typeof fetch>
+): ReturnType<typeof fetch> {
+  let res: Awaited<ReturnType<typeof fetch>>;
+  do {
+    res = await fetch(...args);
+    if (res.status >= 500) {
+      console.error(`${res.status} in free session service, retrying!`);
+    }
+  } while (res.status >= 500);
+  return res;
 }
