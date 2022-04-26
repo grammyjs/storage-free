@@ -48,10 +48,10 @@ export function freeStorage<T>(token: string) {
       return await storage.call("GET", key);
     },
     async write(key: string, data: T) {
-      return await storage.call("POST", key, JSON.stringify(data));
+      await storage.call("POST", key, JSON.stringify(data));
     },
     async delete(key: string) {
-      return await storage.call("DELETE", key);
+      await storage.call("DELETE", key);
     },
   };
 }
