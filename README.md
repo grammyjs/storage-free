@@ -93,7 +93,7 @@ bot.use(session({
   storage: freeStorage<SessionData>(bot.token),
 }));
 
-// Use persistant session data in update handlers
+// Use persistent session data in update handlers
 bot.on("message", async (ctx) => {
   ctx.session.count++;
   await ctx.reply(`Message count: ${ctx.session.count}`);
