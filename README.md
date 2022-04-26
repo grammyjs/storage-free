@@ -1,4 +1,6 @@
-# Free Sessions for [grammY](https://github.com/grammyjs/grammY)
+# <h1 align="center">grammY Free Sessions</h1>
+
+---
 
 Storage adapter that can be used to [store your session data](https://grammy.dev/plugins/session.html) for free and with zero setup.
 Authentication works via your existing bot token.
