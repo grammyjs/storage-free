@@ -18,7 +18,7 @@ import { freeStorage } from "https://deno.land/x/grammy_storage_free/mod.ts";
 // Install the session middleware
 bot.use(session({
   initial: ...
-  storage: freeStorage(bot.token)
+  storage: freeStorage<SessionData>(bot.token),
 }))
 ```
 
@@ -39,7 +39,7 @@ import { freeStorage } from "@grammyjs/storage-free";
 // Install the session middleware
 bot.use(session({
   initial: ...
-  storage: freeStorage(bot.token)
+  storage: freeStorage<SessionData>(bot.token),
 }))
 ```
 
@@ -84,11 +84,11 @@ interface SessionData {
 type MyContext = Context & SessionFlavor<SessionData>;
 
 // Create the bot and register the session middleware
-const bot = new Bot<MyContext>(""); // <-- Put your Bot token here.
+const bot = new Bot<MyContext>(""); // <-- put your bot token between the ""
 
 bot.use(session({
   initial: () => ({ count: 0 }),
-  storage: freeStorage(bot.token),
+  storage: freeStorage<SessionData>(bot.token),
 }));
 
 // Use persistant session data in update handlers
