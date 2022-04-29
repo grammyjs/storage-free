@@ -51,7 +51,7 @@ class Storage {
   }
 }
 
-/** 
+/**
  * Options for creating a storage adapter.
  */
 export interface StorageOptions {
