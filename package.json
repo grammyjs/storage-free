@@ -1,6 +1,6 @@
 {
   "name": "@grammyjs/storage-free",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Storage adapter for grammY's free sessions",
   "main": "out/mod.js",
   "types": "out/mod.d.ts",
