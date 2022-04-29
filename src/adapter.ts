@@ -1,19 +1,26 @@
 class Storage {
-  private jwt: string | undefined;
+  public jwt: string | undefined;
   constructor(
     private readonly token: string,
     private readonly rootUrl = "https://grammy-free-session.deno.dev",
   ) {}
 
   async login() {
-    const url = `${this.rootUrl}/login`;
-    const body = JSON.stringify({ token: this.token });
-    const response = await retryFetch(url, { method: "POST", body });
-    const { token } = await response.json();
-    if (typeof token !== "string") {
-      throw new Error("Cannot use free session, invalid bot token!");
+    if (this.jwt === undefined) {
+      const url = `${this.rootUrl}/login`;
+      const body = JSON.stringify({ token: this.token });
+      const response = await retryFetch(url, { method: "POST", body });
+      const { token } = await response.json();
+      if (typeof token !== "string") {
+        throw new Error("Cannot use free session, invalid bot token!");
+      }
+      this.jwt = token;
     }
-    this.jwt = token;
+    return this.jwt;
+  }
+
+  logout() {
+    this.jwt = undefined;
   }
 
   async call(
@@ -23,13 +30,13 @@ class Storage {
   ): Promise<string | undefined> {
     // perform request
     const url = `${this.rootUrl}/session/${key}`;
-    if (this.jwt === undefined) await this.login();
-    const headers = { "Authorization": `Bearer ${this.jwt}` };
+    const jwt = await this.login();
+    const headers = { "Authorization": `Bearer ${jwt}` };
     const response = await retryFetch(url, { method, body, headers });
     // handle response
     if (response.status === 401) {
       // token was revoked, must login again
-      this.jwt = undefined;
+      this.logout();
       return await this.call(method, key, body);
     } else if (response.status === 404) {
       // empty session
@@ -44,8 +51,31 @@ class Storage {
   }
 }
 
-export function freeStorage<T>(token: string, opts?: { rootUrl?: string }) {
+/** 
+ * Options for creating a storage adapter.
+ */
+export interface StorageOptions {
+  /**
+   * The root URL of the storage backend. Useful if you want to host your own
+   * storage backend behind a different URL.
+   */
+  rootUrl?: string;
+  /**
+   * A storage authentication token that will be used when authenticating at the
+   * backend. Note that the library will automatically renew the token if
+   * authentication fails. Hence, you will still need to provide the bot token.
+   */
+  jwt?: string;
+}
+
+/**
+ * @param token The bot token of your bot.
+ * @param opts Further configuration options
+ * @returns An adapter to grammY's free session storage
+ */
+export function freeStorage<T>(token: string, opts?: StorageOptions) {
   const storage = new Storage(token, opts?.rootUrl);
+  if (opts?.jwt !== undefined) storage.jwt = opts.jwt;
   return {
     async read(key: string): Promise<T> {
       const session = await storage.call("GET", key);
@@ -56,6 +86,16 @@ export function freeStorage<T>(token: string, opts?: { rootUrl?: string }) {
     },
     async delete(key: string) {
       await storage.call("DELETE", key);
+    },
+    /**
+     * Returns the storage authentication token which is used to store the
+     * session data. Only useful if you want to avoid the login call that will
+     * be performed automatically when the storage adapter contacts its backend
+     * for the first time. This can improve startup performance and is
+     * especially useful in serverless environments.
+     */
+    async getToken() {
+      return await storage.login();
     },
   };
 }
