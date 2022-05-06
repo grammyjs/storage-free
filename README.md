@@ -1,3 +1,7 @@
+# Archived!!!
+
+All storages moved to our new monorepository, contained all adapters inside of it. Check it out: https://github.com/grammyjs/storages
+
 # <h1 align="center">grammY Free Sessions</h1>
 
 ---
